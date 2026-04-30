@@ -6,19 +6,36 @@ A native Markdown viewer and editor for macOS. Clean modern UI inspired by Obsid
 
 ## Features
 
-- Live preview with GitHub-flavored Markdown
+### Working with a document
+
 - Toggle between rendered preview and plain-text editor (`⌘E`)
+- Outline sidebar with click-to-scroll — navigate the document's structure
+- Browse sibling `.md` files in the same folder — jump between docs without leaving the window
+
+### Rendering & UX
+
+- Live preview with GitHub-flavored Markdown
 - Syntax-highlighted code blocks (Splash)
 - KaTeX math (`$$ … $$`)
 - Mermaid diagrams
 - GFM tables, task lists, footnotes, blockquotes
 - Light & dark mode (follows the system)
-- Outline sidebar with click-to-scroll
-- Browse sibling `.md` files in the same folder
 - Live reload when the file changes on disk
 - Drag & drop, multi-window (one window per file)
 
-## Build & install
+## Install
+
+### Download (recommended)
+
+Grab the latest `.app` directly from the [Releases page](https://github.com/JustTrying-Arduino/md-viewer/releases/latest):
+
+1. Download `MD-Viewer-x.y.z.zip`
+2. Unzip and move `MD Viewer.app` into `/Applications`
+3. First launch: right-click the app → **Open** (the build is ad-hoc signed, not notarized)
+
+Requires **macOS 14+**.
+
+### Build from source
 
 Requires **macOS 14+**, **Xcode 15+**, and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 

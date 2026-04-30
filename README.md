@@ -2,7 +2,7 @@
 
 A native Markdown viewer and editor for macOS. Clean modern UI inspired by Obsidian's reading mode, built entirely in SwiftUI.
 
-<!-- screenshots go here -->
+![MD Viewer — clean reading mode](examples/Clean.jpg)
 
 ## Features
 
@@ -11,6 +11,8 @@ A native Markdown viewer and editor for macOS. Clean modern UI inspired by Obsid
 - Toggle between rendered preview and plain-text editor (`⌘E`)
 - Outline sidebar with click-to-scroll — navigate the document's structure
 - Browse sibling `.md` files in the same folder — jump between docs without leaving the window
+
+![Outline sidebar and folder browser open on a Mermaid-heavy document](examples/Features.jpg)
 
 ### Rendering & UX
 
@@ -22,6 +24,8 @@ A native Markdown viewer and editor for macOS. Clean modern UI inspired by Obsid
 - Light & dark mode (follows the system)
 - Live reload when the file changes on disk
 - Drag & drop, multi-window (one window per file)
+
+![Plain-text editor mode for quick edits](examples/Mode%20edition.jpg)
 
 ## Install
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<base href="mdv-asset://app/" />
+<link rel="stylesheet" href="katex/katex.min.css" />
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$',  right: '$',  display: false}
+    ],
+    throwOnError: false
+  });
+  __reportHeight();
+"></script>
+<style>
+  :root { color-scheme: light dark; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    overflow: hidden;
+  }
+  body { padding: 8px 0; }
+  .katex-display { margin: 0; overflow-x: auto; overflow-y: hidden; }
+</style>
+<script>
+  function __reportHeight() {
+    const h = Math.ceil(document.documentElement.scrollHeight);
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.height) {
+      window.webkit.messageHandlers.height.postMessage(h);
+    }
+  }
+  window.addEventListener('load', __reportHeight);
+  new ResizeObserver(__reportHeight).observe(document.documentElement);
+</script>
+</head>
+<body>__CONTENT__</body>
+</html>

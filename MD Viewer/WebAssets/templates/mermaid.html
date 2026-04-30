@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<base href="mdv-asset://app/" />
+<style>
+  :root { color-scheme: light dark; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+  body { padding: 8px 0; }
+  .mermaid { display: flex; justify-content: center; }
+  .mermaid svg { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<pre class="mermaid">__CONTENT__</pre>
+<script src="mermaid/mermaid.min.js"></script>
+<script>
+  function __reportHeight() {
+    const h = Math.ceil(document.documentElement.scrollHeight);
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.height) {
+      window.webkit.messageHandlers.height.postMessage(h);
+    }
+  }
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: '__THEME__',
+    securityLevel: 'strict',
+    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+  });
+  mermaid.run().then(__reportHeight).catch(__reportHeight);
+  new ResizeObserver(__reportHeight).observe(document.documentElement);
+</script>
+</body>
+</html>

@@ -11,8 +11,12 @@ A native Markdown viewer and editor for macOS. Clean modern UI inspired by Obsid
 - Toggle between rendered preview and plain-text editor (`⌘E`)
 - Outline sidebar with click-to-scroll — navigate the document's structure
 - Browse sibling `.md` files in the same folder — jump between docs without leaving the window
+- Click internal `[link](other.md)` to open a sibling doc in place — with a **Back** button to return
+- Click `[anchor](#heading)` links to jump to a section within the current document
 
 ![Outline sidebar and folder browser open on a Mermaid-heavy document](examples/Features.jpg)
+
+> **New in v0.2.0** — Internal Markdown links, anchor jumps, and smoother scrolling on Mermaid / code blocks. [Release notes →](https://github.com/JustTrying-Arduino/md-viewer/releases/tag/v0.2.0)
 
 ### Rendering & UX
 

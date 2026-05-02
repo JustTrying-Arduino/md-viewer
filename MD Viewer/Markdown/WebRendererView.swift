@@ -24,7 +24,7 @@ struct WebRendererView: NSViewRepresentable {
             context.coordinator.handlerStrongRef = handler
         }
 
-        let webView = WKWebView(frame: .zero, configuration: config)
+        let webView = PassthroughWebView(frame: .zero, configuration: config)
         webView.setValue(false, forKey: "drawsBackground")
         webView.navigationDelegate = context.coordinator
         loadHTML(in: webView)
@@ -42,6 +42,12 @@ struct WebRendererView: NSViewRepresentable {
     private func loadHTML(in webView: WKWebView) {
         let baseURL = URL(string: "\(WebAssets.scheme)://app/")
         webView.loadHTMLString(html, baseURL: baseURL)
+    }
+
+    private final class PassthroughWebView: WKWebView {
+        override func scrollWheel(with event: NSEvent) {
+            nextResponder?.scrollWheel(with: event)
+        }
     }
 
     final class Coordinator: NSObject, WKScriptMessageHandler, WKNavigationDelegate {

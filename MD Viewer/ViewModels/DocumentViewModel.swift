@@ -12,12 +12,14 @@ final class DocumentViewModel {
     var showOutline: Bool = false
     var showFiles: Bool = false
     private(set) var lastSavedText: String = ""
+    private(set) var navigationHistory: [URL] = []
 
     @ObservationIgnored private var watcher: FileWatcher?
     @ObservationIgnored private var suppressWatcherUntil: Date = .distantPast
     @ObservationIgnored private var conflictAlertOnScreen = false
 
     var isDirty: Bool { rawText != lastSavedText }
+    var canGoBack: Bool { !navigationHistory.isEmpty }
 
     var windowTitle: String {
         let base = url?.lastPathComponent ?? "MD Viewer"
@@ -39,7 +41,14 @@ final class DocumentViewModel {
             }
     }
 
+    /// Loads a file as a fresh document, resetting the back-navigation history.
+    /// Use this for external entry points (Finder open, drop, File menu).
     func load(url: URL) {
+        navigationHistory.removeAll()
+        performLoad(url: url)
+    }
+
+    private func performLoad(url: URL) {
         do {
             let text = try String(contentsOf: url, encoding: .utf8)
             self.url = url
@@ -73,7 +82,29 @@ final class DocumentViewModel {
     /// Replace the current document in place. If there are unsaved changes,
     /// ask the user whether to save, discard, or cancel.
     func switchDocument(to newURL: URL) {
+        performSwitch(to: newURL, recordHistory: true)
+    }
+
+    /// Pop the most recent entry off the navigation history and load it.
+    func goBack() {
+        guard let previous = navigationHistory.last else { return }
+        performSwitch(to: previous, recordHistory: false, popHistory: true)
+    }
+
+    private func performSwitch(to newURL: URL, recordHistory: Bool, popHistory: Bool = false) {
         guard newURL != url else { return }
+
+        let proceed: () -> Void = { [weak self] in
+            guard let self else { return }
+            if recordHistory, let current = self.url {
+                self.navigationHistory.append(current)
+            }
+            if popHistory {
+                self.navigationHistory.removeLast()
+            }
+            self.performLoad(url: newURL)
+        }
+
         if isDirty, let current = url {
             let alert = NSAlert()
             alert.messageText = "“\(current.lastPathComponent)” has unsaved changes"
@@ -86,14 +117,14 @@ final class DocumentViewModel {
             switch alert.runModal() {
             case .alertFirstButtonReturn:
                 save()
-                load(url: newURL)
+                proceed()
             case .alertSecondButtonReturn:
-                load(url: newURL)
+                proceed()
             default:
                 return
             }
         } else {
-            load(url: newURL)
+            proceed()
         }
     }
 

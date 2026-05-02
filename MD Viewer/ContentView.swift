@@ -56,6 +56,16 @@ struct ContentView: View {
                 .disabled(vm.url == nil || vm.mode != .preview)
             }
             ToolbarItem(placement: .primaryAction) {
+                if vm.canGoBack && vm.mode == .preview {
+                    Button {
+                        vm.goBack()
+                    } label: {
+                        Image(systemName: "arrow.uturn.backward.circle")
+                    }
+                    .help("Back to previous document")
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
                 if vm.url != nil {
                     Button {
                         vm.toggleMode()
@@ -93,7 +103,12 @@ struct ContentView: View {
     private var mainContent: some View {
         if vm.url != nil {
             if vm.mode == .preview {
-                PreviewView(text: vm.rawText, baseURL: vm.url, scrollTarget: $scrollTarget)
+                PreviewView(
+                    text: vm.rawText,
+                    baseURL: vm.url,
+                    scrollTarget: $scrollTarget,
+                    onInternalLink: { vm.switchDocument(to: $0) }
+                )
             } else {
                 EditorView(text: $vm.rawText)
             }

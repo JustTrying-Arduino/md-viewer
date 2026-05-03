@@ -107,8 +107,15 @@ struct ContentView: View {
                     text: vm.rawText,
                     baseURL: vm.url,
                     scrollTarget: $scrollTarget,
-                    onInternalLink: { vm.switchDocument(to: $0) }
+                    onInternalLink: { vm.switchDocument(to: $0) },
+                    initialSectionID: vm.url.flatMap { vm.savedScrollSection(for: $0) },
+                    onScrollSectionChanged: { id in
+                        if let url = vm.url {
+                            vm.recordScrollSection(id, for: url)
+                        }
+                    }
                 )
+                .id(vm.url)
             } else {
                 EditorView(text: $vm.rawText)
             }

@@ -6,7 +6,11 @@ struct PreviewView: View {
     let baseURL: URL?
     @Binding var scrollTarget: String?
     var onInternalLink: ((URL) -> Void)?
+    var initialSectionID: String?
+    var onScrollSectionChanged: ((String) -> Void)?
 
+    @State private var topVisibleID: String?
+    @State private var didRestore = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -25,12 +29,14 @@ struct PreviewView: View {
                             .id(section.id)
                     }
                 }
+                .scrollTargetLayout()
                 .textSelection(.enabled)
                 .padding(.horizontal, 48)
                 .padding(.vertical, 32)
                 .frame(maxWidth: 960, alignment: .leading)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
+            .scrollPosition(id: $topVisibleID, anchor: .top)
             .background(Color(nsColor: .textBackgroundColor))
             .environment(\.openURL, OpenURLAction { url in
                 if let sectionID = resolveSameDocumentAnchor(url, anchorMap: anchorMap) {
@@ -50,6 +56,27 @@ struct PreviewView: View {
                 }
                 DispatchQueue.main.async {
                     scrollTarget = nil
+                }
+            }
+            .onChange(of: topVisibleID) { _, newID in
+                guard didRestore, let newID else { return }
+                onScrollSectionChanged?(newID)
+            }
+            .onAppear {
+                guard !didRestore else { return }
+                if let id = initialSectionID {
+                    // Defer until after first layout so proxy.scrollTo lands;
+                    // gate recording until the scroll has settled, otherwise
+                    // the initial "section-0" reading from .scrollPosition
+                    // would overwrite the saved position.
+                    DispatchQueue.main.async {
+                        proxy.scrollTo(id, anchor: .top)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            didRestore = true
+                        }
+                    }
+                } else {
+                    didRestore = true
                 }
             }
         }

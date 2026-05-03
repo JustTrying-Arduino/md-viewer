@@ -17,6 +17,7 @@ final class DocumentViewModel {
     @ObservationIgnored private var watcher: FileWatcher?
     @ObservationIgnored private var suppressWatcherUntil: Date = .distantPast
     @ObservationIgnored private var conflictAlertOnScreen = false
+    @ObservationIgnored private var savedScrollSections: [URL: String] = [:]
 
     var isDirty: Bool { rawText != lastSavedText }
     var canGoBack: Bool { !navigationHistory.isEmpty }
@@ -77,6 +78,16 @@ final class DocumentViewModel {
     func toggleMode() {
         guard url != nil else { return }
         mode = (mode == .preview) ? .edit : .preview
+    }
+
+    // MARK: - Scroll position (in-memory, session-scoped)
+
+    func recordScrollSection(_ id: String, for url: URL) {
+        savedScrollSections[url.standardizedFileURL] = id
+    }
+
+    func savedScrollSection(for url: URL) -> String? {
+        savedScrollSections[url.standardizedFileURL]
     }
 
     /// Replace the current document in place. If there are unsaved changes,

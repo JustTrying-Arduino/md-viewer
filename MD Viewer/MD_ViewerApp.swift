@@ -28,6 +28,11 @@ struct MD_ViewerApp: App {
             CommandMenu("View") {
                 ToggleModeCommand()
             }
+            CommandMenu("Find") {
+                FindCommand()
+                FindNextCommand()
+                FindPreviousCommand()
+            }
         }
     }
 }

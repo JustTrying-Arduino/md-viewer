@@ -13,6 +13,7 @@ final class DocumentViewModel {
     var showFiles: Bool = false
     private(set) var lastSavedText: String = ""
     private(set) var navigationHistory: [URL] = []
+    let find = FindController()
 
     @ObservationIgnored private var watcher: FileWatcher?
     @ObservationIgnored private var suppressWatcherUntil: Date = .distantPast
@@ -56,6 +57,7 @@ final class DocumentViewModel {
             self.rawText = text
             self.lastSavedText = text
             self.mode = .preview
+            self.find.dismiss()
             startWatching()
         } catch {
             presentError(error, message: "Could not open \(url.lastPathComponent)")

@@ -106,6 +106,7 @@ struct ContentView: View {
                 PreviewView(
                     text: vm.rawText,
                     baseURL: vm.url,
+                    find: vm.find,
                     scrollTarget: $scrollTarget,
                     onInternalLink: { vm.switchDocument(to: $0) },
                     initialSectionID: vm.url.flatMap { vm.savedScrollSection(for: $0) },

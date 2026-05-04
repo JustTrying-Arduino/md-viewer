@@ -5,7 +5,7 @@ extension Theme {
     static let obsidian = Theme()
         .text {
             ForegroundColor(.obsidianText)
-            BackgroundColor(.obsidianBackground)
+            BackgroundColor(nil)
             FontSize(16)
         }
         .code {

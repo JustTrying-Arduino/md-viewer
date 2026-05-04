@@ -71,3 +71,54 @@ struct ToggleModeCommand: View {
         }
     }
 }
+
+struct FindCommand: View {
+    @FocusedValue(\.document) private var document
+
+    var body: some View {
+        Button("Find…") {
+            document?.find.activate()
+        }
+        .keyboardShortcut("f", modifiers: .command)
+        .disabled(!isAvailable)
+    }
+
+    private var isAvailable: Bool {
+        guard let document, document.url != nil else { return false }
+        return document.mode == .preview
+    }
+}
+
+struct FindNextCommand: View {
+    @FocusedValue(\.document) private var document
+
+    var body: some View {
+        Button("Find Next") {
+            document?.find.next()
+        }
+        .keyboardShortcut("g", modifiers: .command)
+        .disabled(!isAvailable)
+    }
+
+    private var isAvailable: Bool {
+        guard let document, document.url != nil else { return false }
+        return document.mode == .preview && !document.find.matches.isEmpty
+    }
+}
+
+struct FindPreviousCommand: View {
+    @FocusedValue(\.document) private var document
+
+    var body: some View {
+        Button("Find Previous") {
+            document?.find.previous()
+        }
+        .keyboardShortcut("g", modifiers: [.command, .shift])
+        .disabled(!isAvailable)
+    }
+
+    private var isAvailable: Bool {
+        guard let document, document.url != nil else { return false }
+        return document.mode == .preview && !document.find.matches.isEmpty
+    }
+}

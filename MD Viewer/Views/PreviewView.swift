@@ -4,6 +4,7 @@ import MarkdownUI
 struct PreviewView: View {
     let text: String
     let baseURL: URL?
+    @Bindable var find: FindController
     @Binding var scrollTarget: String?
     var onInternalLink: ((URL) -> Void)?
     var initialSectionID: String?
@@ -17,6 +18,8 @@ struct PreviewView: View {
         let processed = MathPreprocessor.process(text)
         let sections = MarkdownSectionParser.parse(processed)
         let anchorMap = buildAnchorMap(sections: sections)
+        let matchedIDs = find.matchedSectionIDs
+        let currentMatchSectionID = find.currentMatch?.sectionID
 
         ScrollViewReader { proxy in
             ScrollView {
@@ -25,6 +28,12 @@ struct PreviewView: View {
                         Markdown(section.content, baseURL: baseURL, imageBaseURL: baseURL)
                             .markdownTheme(.obsidian)
                             .markdownCodeSyntaxHighlighter(SplashSyntaxHighlighter(colorScheme: colorScheme))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(highlightBackground(
+                                sectionID: section.id,
+                                matchedIDs: matchedIDs,
+                                currentID: currentMatchSectionID
+                            ))
                             .padding(.top, index == 0 ? 0 : topSpacing(for: section.level))
                             .id(section.id)
                     }
@@ -49,6 +58,15 @@ struct PreviewView: View {
                 }
                 return .systemAction
             })
+            .overlay(alignment: .topTrailing) {
+                if find.isVisible {
+                    FindBarView(controller: find)
+                        .padding(.top, 12)
+                        .padding(.trailing, 16)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.15), value: find.isVisible)
             .onChange(of: scrollTarget) { _, target in
                 guard let target else { return }
                 withAnimation(.easeInOut(duration: 0.25)) {
@@ -61,6 +79,16 @@ struct PreviewView: View {
             .onChange(of: topVisibleID) { _, newID in
                 guard didRestore, let newID else { return }
                 onScrollSectionChanged?(newID)
+            }
+            .onChange(of: find.query) { _, _ in
+                find.recompute(sections: sections)
+            }
+            .onChange(of: text) { _, _ in
+                find.recompute(sections: sections)
+            }
+            .onChange(of: find.currentMatch?.sectionID) { _, newID in
+                guard find.isVisible, let newID else { return }
+                scrollTarget = newID
             }
             .onAppear {
                 guard !didRestore else { return }
@@ -79,6 +107,21 @@ struct PreviewView: View {
                     didRestore = true
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func highlightBackground(
+        sectionID: String,
+        matchedIDs: Set<String>,
+        currentID: String?
+    ) -> some View {
+        if matchedIDs.contains(sectionID) {
+            let isCurrent = (sectionID == currentID)
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.yellow.opacity(isCurrent ? 0.32 : 0.14))
+                .padding(.horizontal, -6)
+                .padding(.vertical, -2)
         }
     }
 

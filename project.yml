@@ -37,8 +37,8 @@ targets:
       path: MD Viewer/Info.generated.plist
       properties:
         CFBundleDisplayName: MD Viewer
-        CFBundleShortVersionString: "0.2.0"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: "0.2.1"
+        CFBundleVersion: "4"
         LSMinimumSystemVersion: "14.0"
         NSPrincipalClass: NSApplication
         NSHumanReadableCopyright: ""
